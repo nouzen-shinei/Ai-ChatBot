@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ai Chatbot</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.7/css/all.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.staticfile.org/jquery/3.6.3/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/markdown-it/13.0.1/markdown-it.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --dark-primary: #4b6cb7;
+            --dark-secondary: #182848;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Dark Mode Styles */
+        .dark-mode body {
+            background: linear-gradient(135deg, var(--dark-primary), var(--dark-secondary));
+        }
+
+        .dark-mode .navbar h3 {
+            color: #fff !important;
+        }
+
+        .translucent-element {
+            background-color: rgba(255, 255, 255, 0.85) !important;
+            backdrop-filter: blur(10px);
+            border: none !important;
+        }
+
+        .dark-mode .translucent-element {
+            background-color: rgba(0, 0, 0, 0.7) !important;
+            color: #fff !important;
+        }
+
+        .container-fluid {
+            padding: 20px;
+        }
+
+        .row {
+            margin-left: 0px;
+            margin-right: 0px;
+        }
+
+        .chat-box {
+            height: calc(100vh - 280px);
+            overflow-y: auto;
+            background-color: rgba(255, 255, 255, 0.7) !important;
+        }
+
+        .dark-mode .chat-box {
+            background-color: rgba(0, 0, 0, 0.5) !important;
+        }
+
+        .message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            display: inline-block;
+            max-width: 85%;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            /* ensure preformatted text wraps */
+        }
+
+        .left-side {
+            background-color: rgba(211, 211, 211, 0.9);
+            float: left;
+            text-align: left;
+            /* ensure text stays left-aligned */
+        }
+
+        .dark-mode .left-side {
+            background-color: rgba(146, 182, 187, 0.9);
+            /* updated dark mode assistant response background */
+            float: left;
+            text-align: left;
+        }
+
+        .right-side {
+            background-color: rgba(144, 238, 144, 0.9);
+            float: right;
+        }
+
+        .dark-mode .right-side {
+            background-color: rgba(76, 175, 80, 0.9);
+        }
+
+        /* Button Styles */
+        .btn-outline-info:hover {
+            background-color: #17a2b8 !important;
+            color: #fff !important;
+        }
+
+        .btn-outline-danger:hover {
+            background-color: #dc3545 !important;
+            color: #fff !important;
+        }
+
+        .btn-success {
+            background-color: #28a745 !important;
+            border-color: #28a745 !important;
+        }
+
+        .btn-success:hover {
+            background-color: #218838 !important;
+        }
+
+        /* Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+        }
+
+        input:checked+.slider {
+            background-color: var(--primary-color);
+        }
+
+        .dark-mode input:checked+.slider {
+            background-color: var(--dark-primary);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        h3 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        /* Responsive Mobile Styles */
+        @media only screen and (max-width: 480px) {
+            .chat-box {
+                height: calc(100vh - 300px);
+            }
+
+            .card-header {
+                flex-direction: row;
+                /* Keep the header in a row layout */
+                align-items: flex-start;
+                /* Align items to the top */
+                padding: 15px 5px;
+            }
+
+            .card-header .col-6 {
+                width: auto;
+                /* Allow columns to take only the space they need */
+                margin-bottom: 0;
+                /* Remove margin between columns */
+            }
+
+            .card-header .col-6:first-child {
+                flex-grow: 1;
+                /* Allow the left column (Ai Chatbot text) to take remaining space */
+                text-align: left;
+                /* Align text to the left */
+            }
+
+            .card-header .col-6.text-right {
+                display: flex;
+                flex-direction: column;
+                /* Stack buttons vertically */
+                align-items: flex-end;
+                /* Align buttons to the right */
+                gap: 5px;
+                /* Add spacing between buttons */
+            }
+
+            .card-footer .form-group {
+                flex-direction: column;
+            }
+
+            .card-footer .col-md-10,
+            .card-footer .col-md-2 {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .card-footer .btn {
+                width: 100%;
+            }
+
+            .navbar-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            /* Responsive brand text for mobile */
+            .navbar {
+                padding: 20px;
+                /* Reduce top and bottom padding */
+            }
+
+            .navbar .container-fluid {
+                padding: 0px;
+            }
+
+            /* Hide the full brand name in mobile view */
+            .brand-full {
+                display: none;
+            }
+
+            .btn-outline-info {
+                padding: .375rem 0.98rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top shadow translucent-element">
+        <div class="container-fluid justify-content-between">
+            <h3 class="text-dark">
+                <span class="brand-short">ChatSphere</span>
+                <span class="brand-full"> - A Simple Ai Chatbot</span>
+            </h3>
+            <label class="switch mb-0">
+                <input type="checkbox" id="darkModeToggle">
+                <span class="slider round"></span>
+            </label>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card translucent-element">
+                    <div class="card-header row">
+                        <div class="col-6">
+                            <h3>Ai Chatbot</h3>
+                        </div>
+                        <div class="col-6 text-right">
+                            <button onclick="window.print()" class="btn btn-outline-info">Print</button>
+                            <button onclick="clearContent()" class="btn btn-outline-danger">Clear</button>
+                        </div>
+                    </div>
+                    <div class="card-body chat-box" id="chatbox">
+                        <span id="copy-popup" class="popup" style="display: none;">Copied!</span>
+                    </div>
+                    <div class="card-footer">
+                        <div class="form-group row">
+                            <div class="col-md-10 mb-1">
+                                <textarea id="userInput" rows="1" class="form-control"
+                                    placeholder="Type your message..."></textarea>
+                            </div>
+                            <div class="col-md-2">
+                                <button id="sendButton" class="btn btn-success btn-block">Send</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
+    <script>
+        // Dark Mode Toggle
+        const toggleSwitch = document.querySelector('#darkModeToggle');
+        toggleSwitch.addEventListener('change', function () {
+            document.body.classList.toggle('dark-mode');
+        });
+
+        // Chat Functions
+        function clearContent() {
+            document.getElementById('chatbox').innerHTML = '';
+        }
+
+        const chatbox = $("#chatbox");
+        const userInput = $("#userInput");
+        const sendButton = $("#sendButton");
+        let messages = [];
+
+        sendButton.on("click", () => {
+            const message = userInput.val();
+            if (message) {
+                messages.push({ "role": "user", "content": message });
+                const displaytext = window.markdownit().render(message);
+                chatbox.append(`<pre><div class="message right-side">${displaytext}</div></pre>`);
+                chatbox.animate({ scrollTop: chatbox[0].scrollHeight }, "slow");
+                userInput.val("");
+                sendButton.prop("disabled", true).text("Generating...");
+                fetchMessages();
+            }
+        });
+
+        userInput.off("keydown"); // remove existing keydown events if any
+        userInput.on("keydown", (event) => {
+            if (event.keyCode === 13) {
+                // If no modifier keys, prevent default newline and send the message.
+                if (!(event.metaKey || event.ctrlKey || event.shiftKey)) {
+                    event.preventDefault();
+                    sendButton.click();
+                }
+                // Otherwise, allow Enter to insert a newline.
+            }
+        });
+
+        function fetchMessages() {
+            const geminiApiKey = "YOUR_GEMINI_API_KEY_HERE"; // Replace with your Gemini API Key
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`;
+
+            const lastMessage = messages[messages.length - 1].content;
+            const payload = {
+                contents: [{
+                    parts: [{
+                        text: lastMessage
+                    }]
+                }]
+            };
+
+            $.ajax({
+                url: endpoint,
+                method: "POST",
+                timeout: 0,
+                contentType: "application/json",
+                data: JSON.stringify(payload)
+            }).done(function (response) {
+                console.log("Gemini API response:", response);
+                console.log("Candidate:", response.candidates[0]);
+
+                let reply;
+                if (response.error) {
+                    reply = "Gemini API error: " + JSON.stringify(response.error);
+                } else if (response.candidates && response.candidates.length > 0) {
+                    const candidate = response.candidates[0];
+                    if (candidate.content && candidate.content.parts && candidate.content.parts.length > 0 && candidate.content.parts[0].text) {
+                        reply = candidate.content.parts[0].text;
+                    } else if (candidate.parts && candidate.parts.length > 0 && candidate.parts[0].text) {
+                        reply = candidate.parts[0].text;
+                    } else {
+                        reply = candidate.output || candidate.content;
+                    }
+                    if (!reply) {
+                        reply = "No valid response from Gemini API.";
+                    }
+                } else {
+                    reply = "No valid response from Gemini API.";
+                }
+
+                reply = (typeof reply === "string") ? reply : JSON.stringify(reply);
+                messages.push({
+                    role: "assistant",
+                    content: reply
+                });
+
+                const htmlText = window.markdownit().render(String(reply));
+                const botMessageHtml = '<pre><div class="message left-side" id="' + CryptoJS.MD5(htmlText) +
+                    '">' + htmlText + '</div><i class="far fa-clipboard ml-1 btn btn-outline-dark" id="' +
+                    CryptoJS.MD5(htmlText) + '-copy"></i></pre>';
+
+                $("#chatbox").append(botMessageHtml);
+
+                const copyIcon = document.getElementById(CryptoJS.MD5(htmlText) + '-copy');
+                const copyText = document.getElementById(CryptoJS.MD5(htmlText));
+
+                copyIcon.addEventListener("click", function () {
+                    const tempTextarea = document.createElement("textarea");
+                    tempTextarea.value = copyText.textContent;
+                    document.body.appendChild(tempTextarea);
+                    tempTextarea.select();
+                    document.execCommand("copy");
+                    document.body.removeChild(tempTextarea);
+
+                    const copyPopup = document.getElementById("copy-popup");
+                    copyPopup.style.display = "block";
+                    setTimeout(function () {
+                        copyPopup.style.display = "none";
+                    }, 1000);
+                });
+
+                $("#chatbox").animate({ scrollTop: 20000000 }, "slow");
+                $("#sendButton").prop("disabled", false).text("Send");
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                const errorText = "Error: " + (jqXHR.responseJSON?.error?.message || textStatus);
+                const errorMessage = '<pre><div class="message left-side text-danger">' + errorText + '</div></pre>';
+                $("#chatbox").append(errorMessage);
+                $("#chatbox").animate({ scrollTop: 20000000 }, "slow");
+                $("#sendButton").prop("disabled", false).text("Send");
+            });
+        }
+    </script>
+</body>
+
+</html>
