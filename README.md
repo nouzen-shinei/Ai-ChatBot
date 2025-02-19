@@ -2,7 +2,7 @@
 
 ChatSphere is a lightweight, user-friendly AI chatbot powered by the Gemini API. It provides a seamless conversational experience with a modern and responsive design. Whether you're looking to integrate AI into your projects or just want to explore chatbot functionality, ChatSphere is the perfect starting point.
 
-[![Live Demo](https://nouzen-shinei.github.io/Ai-ChatBot/) <!-- Replace with your live demo link -->
+[Live Demo](https://nouzen-shinei.github.io/Ai-ChatBot/) <!-- Replace with your live demo link -->
 
 ---
 
@@ -81,7 +81,7 @@ Check out the live demo of ChatSphere:
 
 ## Contributing
 
-Contributions are welcome! If you'd like to contribute to ChatSphere, please follow these steps:
+Contributions are welcome! If you'd like to contribute to ChatSphere.
 
 ---
 
